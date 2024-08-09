@@ -1,0 +1,16 @@
+description: SIL EV SLAC Simulator
+provides:
+  ev_slac:
+    interface: ev_slac
+    description: SLAC Interface implementation for EV
+    config:
+      ev_id:
+        description: EV id - 17 octets.
+        type: string
+        default: PIONIX_SAYS_HELLO
+enable_external_mqtt: true
+enable_telemetry: true
+metadata:
+  license: https://opensource.org/licenses/Apache-2.0
+  authors:
+    - Bryan Richardson, Patria Security LLC

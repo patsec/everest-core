@@ -1,4 +1,6 @@
 ev_add_module(DCSupplySimulator)
+ev_add_module(EvseSlacSimulator)
+ev_add_module(EvSlacSimulator)
 ev_add_module(IMDSimulator)
 ev_add_module(JsEvManager)
 ev_add_module(JsSlacSimulator)

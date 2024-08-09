@@ -1,0 +1,28 @@
+description: SIL EVSE SLAC Simulator
+config:
+  connector_id:
+    description: Connector ID of the EVSE Manager to which this simulator is connected to
+    type: integer
+provides:
+  evse_slac:
+    interface: slac
+    description: SLAC Interface implementation for EVSE
+    config:
+      evse_id:
+        description: EVSE id - 17 octets.
+        type: string
+        default: PIONIX_SAYS_HELLO
+      nid:
+        description: NID (Network Identification Key) - 7 octets.
+        type: string
+        default: pionix!
+      number_of_sounds:
+        description: SLAC number of sounds.
+        type: integer
+        default: 10
+enable_external_mqtt: true
+enable_telemetry: true
+metadata:
+  license: https://opensource.org/licenses/Apache-2.0
+  authors:
+    - Bryan Richardson, Patria Security LLC
