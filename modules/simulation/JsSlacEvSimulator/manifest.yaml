@@ -1,0 +1,21 @@
+description: SIL Implementation of EV SLAC data link negotiation according to ISO15118-3.
+config:
+  use_pipes:
+    description: Use Unix pipes instead of MQTT for out-of-band back channel with EVSE
+    type: boolean
+    default: false
+provides:
+  ev:
+    interface: ev_slac
+    description: SLAC interface implementation for EV side
+    config:
+      ev_id:
+        description: EV id - 17 octets.
+        type: string
+        default: PIONIX_SAYS_HELLO
+enable_external_mqtt: true
+metadata:
+  license: https://opensource.org/licenses/Apache-2.0
+  authors:
+    - Cornelius Claussen (Pionix GmbH)
+    - Bryan Richardson (Patria Security, LLC)

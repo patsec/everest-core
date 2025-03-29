@@ -1,0 +1,17 @@
+description: SIL simulator for YETI EV hardware v1.0
+config:
+  use_pipes:
+    description: Use Unix pipes instead of MQTT for out-of-band back channel with EVSE
+    type: boolean
+    default: false
+provides:
+  ev_board_support:
+    interface: ev_board_support
+    description: provides the EV board support Interface to low level control pilot, relais, rcd
+enable_external_mqtt: true
+enable_telemetry: true
+metadata:
+  license: https://opensource.org/licenses/Apache-2.0
+  authors:
+    - Cornelius Claussen
+    - Bryan Richardson (Patria Security, LLC)
