@@ -76,6 +76,10 @@ config:
     description: Support three phase
     type: boolean
     default: true
+  use_pipes:
+    description: Use Unix pipes instead of MQTT for out-of-band back channel for control
+    type: boolean
+    default: false
 provides:
   main:
     interface: car_simulator

@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2022 Pionix GmbH and Contributors to EVerest
+
 const { evlog, boot_module } = require('everestjs');
 const { setInterval } = require('timers');
 
 let globalconf;
+let use_pipes = false;
 
 function simdata_reset_defaults(mod) {
   mod.simCommands = [];
@@ -495,9 +497,63 @@ function get_hlc_bpt_dc_parameters(mod) {
   };
 }
 
+function process_oob(mod, data) {
+  if (!Object.hasOwn(data, 'source')) {
+    return;
+  }
+
+  if (data.source !== 'control') {
+    return;
+  }
+
+  if (Object.hasOwn(data, 'exit')) {
+    if (data.exit) {
+      process.exit(0);
+    }
+  }
+
+  if (Object.hasOwn(data, 'enable')) {
+    enable(mod, { value: data.enable });
+  }
+
+  if (Object.hasOwn(data, 'execute')) {
+    if (typeof(data.execute) === 'string') {
+      execute_charging_session(mod, { value: data.execute })
+    }
+
+    if (typeof(data.execute) === 'boolean') {
+      if (data.execute) {
+        execute_charging_session(mod, { value: globalconf.module.auto_exec_commands })
+      }
+    }
+  }
+}
+
+function subscribe_oob(mod) {
+  if (use_pipes) {
+    process.stdin.on('data', (chunk) => {
+      let lines = chunk.toString().trim().split('\n');
+
+      for (let i = 0; i < lines.length; i++) {
+        try {
+          process_oob(mod, JSON.parse(lines[i]));
+        } catch {
+          continue;
+        }
+      }
+    });
+  } else {
+    mod.mqtt.subscribe('everest_external/oob/control', (_, chunk) => {
+      process_oob(mod, JSON.parse(chunk));
+    });
+  }
+}
+
 boot_module(async ({
   setup, config, mqtt,
 }) => {
+  use_pipes = config.module.use_pipes;
+
   // Subscribe external cmds for nodered
   mqtt.subscribe(`everest_external/nodered/${config.module.connector_id}/carsim/cmd/enable`, (mod, en) => {
     enable(mod, { value: JSON.parse(en) });
@@ -542,6 +598,8 @@ boot_module(async ({
 
   globalconf = config;
 }).then((mod) => {
+  subscribe_oob(mod);
+
   registerAllCmds(mod);
   mod.enabled = false;
   if (mod.uses_list.ev.length > 0) mod.uses_list.ev[0].call.set_dc_params(get_hlc_dc_parameters(mod));
